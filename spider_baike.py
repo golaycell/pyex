@@ -62,6 +62,10 @@ class HtmlParser(object):
     def paser(self, page_url, html_cont):
         if page_url is None or html_cont is None:
             return
+        soup = BeautifulSoup(html_cont, 'html.parser', from_encoding='utf-8')
+        new_urls = self._get_new_urls(page_url, soup)
+        new_data = self._get_new_data(page_url, soup)
+        return new_urls, new_data
 
 class HtmlDownloader(object):
     def download(self, url):
@@ -113,9 +117,7 @@ class SpiderMain(object):
                 new_url = self.urls.get_new_url()
                 print("craw %d : %s" %(count, new_url))
                 html_cont = self.downloader.download(new_url)
-                print html_cont
                 new_urls, new_data = self.parser.paser(new_url, html_cont)
-                print new_urls
                 self.urls.add_new_urls(new_urls)
                 self.outputer.collect_data(new_data)
 
